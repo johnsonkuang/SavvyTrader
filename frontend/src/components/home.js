@@ -22,6 +22,14 @@ class Home extends Component {
           </Col>
           <Col md={4}>
             <Row>
+              <Col md={4}>
+                <h2>Points:0</h2>
+              </Col>
+              <Col md={4}>
+                <h2>Energy:0</h2>
+              </Col>
+            </Row>
+            <Row>
               <Col>
                 <h2>User Prediction</h2>
                 <div>
