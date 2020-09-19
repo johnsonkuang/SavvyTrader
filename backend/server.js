@@ -3,7 +3,7 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.set('view engine', 'html'); // temporarily set to html?
+
 
 app.use('/trades', require(path.join(__dirname, 'routes/trades')))
 
