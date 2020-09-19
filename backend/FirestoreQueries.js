@@ -36,14 +36,36 @@ router.post('/addPrediction', (req, res) => {
 
 // add a new 'trader' / user to the traders collection
 /*
-set field for initial energy and nothing else for nauw UwU
+set field for name of user and initial energy and nothing else for nauw UwU
+user:"Armand",
+energy:9001
 */
+router.post('/addUser', (req, res) => {
+  req.body.points = 0;
+  const username = req.body.user;
+  delete req.body.user;
+  addToCollectionWithID(req.body, db, "traders", username).then(result => {
+    console.log("Added user with name", username);
+    res.sendStatus(200);
+  })
+  .catch(() => {
+    console.log(result);
+    console.log('Error adding document/user');
+    res.sendStatus(500);
+  });
+});
 
+// export router
 module.exports = router;
 
-
+// further implementation of asynchronous parts of firestore queries
 async function addToCollection(data, db, col) {
   const queryRef = db.collection(col);
   const result = await queryRef.add(data);
+  return result;
+}
+async function addToCollectionWithID(data, db, col, id) {
+  const queryRef = db.collection(col);
+  const result = await queryRef.doc(id).set(data);
   return result;
 }
