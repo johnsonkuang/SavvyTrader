@@ -22,15 +22,33 @@ stockSymbol:"AAPL"
 trader:"vishal"
 */
 router.post('/addPrediction', (req, res) => {
-  req.body.dateMade = admin.firestore.Timestamp.fromDate(new Date());
-  addToCollection(req.body, db, "trades").then(result => {
-    console.log('Added document with ID: ', result.id);
-    res.sendStatus(200);
-  })
-  .catch(() => {
+  user = req.body.user;
+  getUserInfo(user, db, "traders").then(result => {
     console.log(result);
-    console.log('Error adding document/prediction');
-    res.sendStatus(500);
+    if (result != null && result.energy > 10) {
+      setUserEnergy(user, result.energy - 10, db, "traders").then(uer => {
+        console.log("reduced energy for user: ", req.body.user);
+      })
+      .catch(() => {
+        console.log(uer);
+        res.sendStatus(500);
+        return;
+      })
+      req.body.dateMade = admin.firestore.Timestamp.fromDate(new Date());
+      addToCollection(req.body, db, "trades").then(result => {
+        console.log('Added document with ID: ', result.id);
+        res.sendStatus(200);
+      })
+      .catch(() => {
+        console.log(result);
+        console.log('Error adding document/prediction');
+        res.sendStatus(500);
+      })
+    }
+    else {
+      console.log('Not enough energy');
+      res.sendStatus(200);
+    }
   });
 });
 
@@ -75,6 +93,40 @@ router.get('/getPredictions', (req, res) => {
     res.sendStatus(500);
   });
 });
+
+// get the top 10 users from the firestore based on points
+router.get('/getLeaderboard', (req, res) => {
+  getLeaderBoard(db, "traders").then(result => {
+    if (result.empty) {
+      console.log('No matching users');
+      return result;
+    }
+    console.log("Got all top users");
+    res.send(result);
+  })
+  .catch(() => {
+    console.log(result);
+    console.log('Error getting predictions from user: ', req.body.user);
+    res.sendStatus(500);
+  });
+});
+
+// get a specific users infocfrom username
+router.get('/getUserInfo', (req, res) => {
+  getUserInfo(req.body.user, db, "traders").then(result => {
+    if (result == null) {
+      console.log('No matching users');
+      return result;
+    }
+    console.log("Got user info");
+    res.send(result);
+  })
+  .catch(() => {
+    console.log(result);
+    console.log('Error getting user: ', req.body.user);
+    res.sendStatus(500);
+  });
+});
 // export router
 module.exports = router;
 
@@ -89,9 +141,26 @@ async function addToCollectionWithID(data, db, col, id) {
   const result = await queryRef.doc(id).set(data);
   return result;
 }
+async function setUserEnergy(user, newEnergy, db, col) {
+  const queryRef = db.collection(col).doc(user);
+  const result = await queryRef.update({energy: newEnergy});
+  return result;
+}
+async function getUserInfo(user, db, col) {
+  const queryRef = db.collection(col).doc(user);
+  const resultRef = await queryRef.get();
+  if (!resultRef.exists) {
+    return null;
+  }
+  return resultRef.data();
+}
 async function getUsersPredictions(user, db, col) {
-  let result = [];
   const queryRef = db.collection(col);
   const resultRef = await queryRef.where('trader', '==', user).get();
   return resultRef.docs.map(doc => doc.data());
+}
+async function getLeaderBoard(db, col) {
+  const queryRef = db.collection(col);
+  const resultRef = await queryRef.orderBy("points").limit(10).get();
+  return resultRef.docs.map(doc => doc.id + ": " + doc.data().points);
 }
