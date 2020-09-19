@@ -1,10 +1,13 @@
 import React, {Component } from 'react';
+import Container from 'react-bootstrap/esm/Container';
 
 
 class Home extends Component {
   render(){
     return(
-      <div><h1>Home</h1></div>
+      <Container>
+        <div>Home</div>
+      </Container>
     )
   }
 }

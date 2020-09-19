@@ -1,12 +1,22 @@
 import React from 'react';
 
 import './App.css';
-import {Layout, Header, Navigation, Drawer, Content} from 'react-mdl';
-import {Link} from 'react-router-dom'
 import Main from './components/main';
+import NavBar from './NavBar';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 function App() {
   return (
-    <div className="demo-big-content">
+    <div>
+        <NavBar />
+        <Main></Main>
+        <FontAwesomeIcon icon="search" />
+    </div>
+  );
+}
+
+/*
+<div className="demo-big-content">
       <Layout>
         <Header
           className="header-color"
@@ -36,7 +46,6 @@ function App() {
         </Content>
       </Layout>
     </div>
-  );
-}
+*/
 
 export default App;
