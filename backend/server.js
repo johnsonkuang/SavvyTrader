@@ -1,6 +1,9 @@
+const dayjs = require('dayjs');
 const express = require('express');
 const app = express();
 const queries = require('./FirestoreQueries')
+const getStockData = require('./stockData');
+
 const PORT = process.env.PORT || 8080;
 const admin = require('firebase-admin');
 // initialize firebase
@@ -114,7 +117,7 @@ app.get('/getLeaderboard', (req, res) => {
   });
 });
 
-// get a specific users infocfrom username
+// get a specific users infofrom username
 app.get('/getUserInfo', (req, res) => {
   queries.getUserInfo(req.body.user, db, "traders").then(result => {
     if (result == null) {
@@ -134,6 +137,35 @@ app.get('/', (req, res) => {
 	res.send('Hello World')
 });
 
+app.get('/getCandlesticks', async (req, res) => {
+	let period = (req.query.period || '').toLowerCase();
+
+	if (!req.query.stock || !['day', 'week', 'month', 'year'].includes(period)) {
+		res.status(400).send('Invalid period or missing stock name');
+		return;
+	}
+
+	const stock = req.query.stock;
+	const dateFrom = dayjs().subtract(1, period);
+	const dateTo = dayjs();
+	const resolution = {
+		day: '30',
+		week: '60',
+		month: 'D',
+		year: 'W',
+  }[period];
+
+  let candlesticks;
+
+  try {
+    candlesticks = await getStockData(stock, resolution, dateFrom, dateTo);
+  } catch (error) {
+    res.status(400).send('Invalid stock name');
+    return;
+  }
+
+	res.send(candlesticks);
+});
 
 const server = app.listen(PORT, () => {
 	const host = server.address().address;
