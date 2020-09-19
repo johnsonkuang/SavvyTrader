@@ -36,7 +36,7 @@ router.post('/addPrediction', (req, res) => {
 
 // add a new 'trader' / user to the traders collection
 /*
-set field for name of user and initial energy and nothing else for nauw UwU
+set key for name of user and initial energy and nothing else for nauw UwU
 user:"Armand",
 energy:9001
 */
@@ -45,7 +45,7 @@ router.post('/addUser', (req, res) => {
   const username = req.body.user;
   delete req.body.user;
   addToCollectionWithID(req.body, db, "traders", username).then(result => {
-    console.log("Added user with name", username);
+    console.log("Added user with name ", username);
     res.sendStatus(200);
   })
   .catch(() => {
@@ -55,6 +55,26 @@ router.post('/addUser', (req, res) => {
   });
 });
 
+
+// get all of a users predictions/trades
+/*
+please only send the user name and nothing else for nawuuwuwuwuwuuw
+*/
+router.get('/getPredictions', (req, res) => {
+  getUsersPredictions(req.body.user, db, "trades").then(result => {
+    if (result.empty) {
+      console.log('No matching predictions');
+      return result;
+    }
+    console.log("Got all trades from user ", req.body.user);
+    res.send(result);
+  })
+  .catch(() => {
+    console.log(result);
+    console.log('Error getting predictions from user: ', req.body.user);
+    res.sendStatus(500);
+  });
+});
 // export router
 module.exports = router;
 
@@ -68,4 +88,10 @@ async function addToCollectionWithID(data, db, col, id) {
   const queryRef = db.collection(col);
   const result = await queryRef.doc(id).set(data);
   return result;
+}
+async function getUsersPredictions(user, db, col) {
+  let result = [];
+  const queryRef = db.collection(col);
+  const resultRef = await queryRef.where('trader', '==', user).get();
+  return resultRef.docs.map(doc => doc.data());
 }
