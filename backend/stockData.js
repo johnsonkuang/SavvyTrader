@@ -32,6 +32,8 @@ function getStockData(stockName, resolution, dateFrom, dateTo) {
 			reject('Invalid resolution');
 		}
 
+		console.log(`Getting stock data for ${stockName} from ${dateFrom.format('YYYY-MM-DD')} to ${dateTo.format('YYYY-MM-DD')} with resolution ${resolution}`);
+
 		finnhubClient.stockCandles(stockName, resolution, dateFrom.unix(), dateTo.unix(), {}, (error, data, response) => {
 			if (error || data.s === 'no_data') {
 				reject('Invalid stock name');

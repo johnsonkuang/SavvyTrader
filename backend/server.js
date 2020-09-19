@@ -1,5 +1,6 @@
 const dayjs = require('dayjs');
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const queries = require('./FirestoreQueries')
 const getStockData = require('./stockData');
@@ -15,6 +16,10 @@ admin.initializeApp({
 const db = admin.firestore();
 
 app.use(express.json());
+
+app.use(cors({
+  origin: 'http://localhost:3000'
+}));
 
 // add a new 'trade' prediction to the trades collection
 /*
