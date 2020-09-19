@@ -32,7 +32,7 @@ class StockGraph extends Component {
 	}
 
 	drawBarChart(data) {
-		const width = 800;
+		const width = 700;
 		const height = 500;
 
 		const cWidth = width / data.length;
