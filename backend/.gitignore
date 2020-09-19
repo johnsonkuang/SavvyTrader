@@ -2,6 +2,7 @@
 
 # keys
 savvytrader-30ec3-firebase-adminsdk.json
+finnhub-api-key.json
 
 # dependencies
 node_modules

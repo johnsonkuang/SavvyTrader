@@ -11,8 +11,10 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "firebase-admin": "^9.2.0",
+    "dayjs": "^1.8.36",
     "express": "^4.17.1",
+    "finnhub": "^1.2.1",
+    "firebase-admin": "^9.2.0",
     "socket.io": "^2.3.0"
   }
 }
