@@ -33,15 +33,13 @@ trader:"vishal"
 */
 app.post('/addPrediction', (req, res) => {
   user = req.body.trader;
-	console.log(user);
   queries.getUserInfo(user, db, "traders").then(result => {
-    console.log(result);
     if (result != null && result.energy > 10) {
       queries.setUserEnergy(user, result.energy - 10, db, "traders").then(uer => {
-        console.log("reduced energy for user: ", req.body.user);
+        console.log("reduced energy for user: ", req.body.trader);
       })
-      .catch(() => {
-        console.log(uer);
+      .catch((error) => {
+        console.log(error);
         res.sendStatus(500);
         return;
       })
@@ -50,8 +48,8 @@ app.post('/addPrediction', (req, res) => {
         console.log('Added document with ID: ', result.id);
         res.sendStatus(200);
       })
-      .catch(() => {
-        console.log(result);
+      .catch((err) => {
+        console.log(err);
         console.log('Error adding document/prediction');
         res.sendStatus(500);
       })
@@ -73,24 +71,70 @@ app.post('/addUser', (req, res) => {
   req.body.points = 0;
   const username = req.body.user;
   delete req.body.user;
-  queries.addToCollectionWithID(req.body, db, "traders", username).then(result => {
+  queries.addToCollectionWithID(req.body, db, "traders", username)
+	.then(result => {
     console.log("Added user with name ", username);
     res.sendStatus(200);
   })
-  .catch(() => {
-    console.log(result);
+  .catch((err) => {
+    console.log(err);
     console.log('Error adding document/user');
     res.sendStatus(500);
   });
 });
 
+// add energy for a specific trader
+/*
+set values for keys user and energy to add like...
+user:"vishal",
+energy"50"
+*/
+app.post('/addEnergyToUser', (req, res) => {
+	user = req.body.user;
+	deltaEnergy = req.body.energy;
+	queries.getUserInfo(user, db, "traders")
+	  .then(userInfo =>
+			queries.setUserEnergy(user, userInfo.energy + deltaEnergy, db, "traders"))
+		.then(result => {
+			console.log("added energy ", deltaEnergy);
+			res.sendStatus(200);
+		})
+		.catch((err) => {
+			console.log(err);
+			console.log("error adding energy");
+			res.sendStatus(500);
+		})
+})
+
+//add points for a traders
+/*
+user: "armand",
+points: 10
+*/
+app.post('/addPointsToUser', (req, res) => {
+	user = req.body.user;
+	deltaPoints = req.body.points;
+	queries.getUserInfo(user, db, "traders")
+	  .then(userInfo =>
+			queries.setUserPoints(user, userInfo.points + deltaPoints, db, "traders"))
+		.then(result => {
+			console.log("added points ", deltaPoints);
+			res.sendStatus(200);
+		})
+		.catch((err) => {
+			console.log(err);
+			console.log("error adding points");
+			res.sendStatus(500);
+		})
+})
 
 // get all of a users predictions/trades
 /*
 please only send the user name and nothing else for nawuuwuwuwuwuuw
 */
 app.get('/getPredictions', (req, res) => {
-  queries.getUsersPredictions(req.body.user, db, "trades").then(result => {
+  queries.getUsersPredictions(req.body.user, db, "trades")
+	.then(result => {
     if (result.empty) {
       console.log('No matching predictions');
       return result;
@@ -98,8 +142,8 @@ app.get('/getPredictions', (req, res) => {
     console.log("Got all trades from user ", req.body.user);
     res.send(result);
   })
-  .catch(() => {
-    console.log(result);
+  .catch((err) => {
+    console.log(err);
     console.log('Error getting predictions from user: ', req.body.user);
     res.sendStatus(500);
   });
@@ -107,7 +151,8 @@ app.get('/getPredictions', (req, res) => {
 
 // get the top 10 users from the firestore based on points
 app.get('/getLeaderboard', (req, res) => {
-  queries.getLeaderBoard(db, "traders").then(result => {
+  queries.getLeaderBoard(db, "traders")
+	.then(result => {
     if (result.empty) {
       console.log('No matching users');
       return result;
@@ -115,8 +160,8 @@ app.get('/getLeaderboard', (req, res) => {
     console.log("Got all top users");
     res.send(result);
   })
-  .catch(() => {
-    console.log(result);
+  .catch((err) => {
+		console.log(err);
     console.log('Error getting predictions from user: ', req.body.user);
     res.sendStatus(500);
   });
@@ -124,7 +169,8 @@ app.get('/getLeaderboard', (req, res) => {
 
 // get a specific users infofrom username
 app.get('/getUserInfo', (req, res) => {
-  queries.getUserInfo(req.body.user, db, "traders").then(result => {
+  queries.getUserInfo(req.body.user, db, "traders")
+	.then(result => {
     if (result == null) {
       console.log('No matching users');
       return result;
@@ -132,8 +178,8 @@ app.get('/getUserInfo', (req, res) => {
     console.log("Got user info");
     res.send(result);
   })
-  .catch(() => {
-    console.log(result);
+  .catch((err) => {
+    console.log(err);
     console.log('Error getting user: ', req.body.user);
     res.sendStatus(500);
   });

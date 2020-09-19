@@ -1,4 +1,3 @@
-const express = require('express');
 
 
 // further implementation of asynchronous parts of firestore queries
@@ -15,6 +14,11 @@ exports.addToCollectionWithID = async function (data, db, col, id) {
 exports.setUserEnergy = async function (user, newEnergy, db, col) {
   const queryRef = db.collection(col).doc(user);
   const result = await queryRef.update({energy: newEnergy});
+  return result;
+}
+exports.setUserPoints = async function (user, newPoints, db, col) {
+  const queryRef = db.collection(col).doc(user);
+  const result = await queryRef.update({points: newPoints});
   return result;
 }
 exports.getUserInfo = async function (user, db, col) {
