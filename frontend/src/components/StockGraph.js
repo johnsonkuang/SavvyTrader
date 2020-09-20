@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import axios from "axios";
 import * as d3 from "d3";
+import './StockGraph.css';
+dayjs.extend(customParseFormat);
 
 const USE_MOCK_DATA = true;
 
@@ -11,31 +14,56 @@ const mockData = [{"time":"2020-08-19 17:00:00","open":131.63999938965,"close":1
 
 class StockGraph extends Component {
 
+	constructor(props) {
+		super(props);
+		this.state = {
+			stockName: 'NFLX',
+			period: 'year',
+			currentPrice: 0,
+			changedPrice: 0,
+			changedPercentage: 0,
+		};
+	}
+
 	componentDidMount() {
-		this.getData('AAPL', 'week').then((data) => this.drawBarChart(data));
+		this.getData(this.props.stockName, this.props.period).then((data) => this.drawBarChart(data));
 	}
 
 	async getData(stock, period) {
-		// save API requests
+		let data = [];
+
 		if (USE_MOCK_DATA) {
-			return mockData;
+			data = mockData;
+			this.setState({ stockName: 'AAPL'});
+		} else {
+			try {
+				const response = await axios.get(SERVER_API_URL, {
+					params: {
+						stock,
+						period
+					}
+				});
+				data = response.data;
+			} catch (error) {
+				console.error(error);
+			}
 		}
 
-		try {
-			const response = await axios.get(SERVER_API_URL, {
-				params: {
-					stock,
-					period
-				}
-			});
-			const data = response.data;
-			data.forEach((c) => c.time = dayjs(c.time, "YYYY-MM-DD HH:mm:ss"));
-			console.log(data);
-			return data;
-		} catch (error) {
-			console.error(error);
-			return [];
+		for (const c of data) {
+			c.time = dayjs(c.time, "YYYY-MM-DD HH:mm:ss")
 		}
+
+		const round = (n) => Math.floor(n * 100) / 100;
+
+		this.setState({
+			currentPrice: round(data[data.length - 1].close),
+			changedPrice: round(data[data.length - 1].close - data[0].open),
+			changedPercentage: round(data[data.length - 1].close / data[0].open - 1),
+		});
+
+		console.log(data);
+		return data;
+
 	}
 
 	calculateStats(data) {
@@ -58,45 +86,82 @@ class StockGraph extends Component {
 	drawBarChart(data) {
 		const width = 700;
 		const height = 500;
+		const padding = 50;
 
+		const cLineWidth = 4;
 		const cWidth = width / data.length;
-		const cShadowWidth = 3;
-		const cSpaceBetween = 1;
+		const cSpaceBetween = cWidth / 3;
+		const cShadowWidth = Math.max(2, (cWidth - cSpaceBetween) / 4);
 
-		let { minPrice, maxPrice, } = this.calculateStats(data);
+		let { minPrice, maxPrice, minDate, maxDate } = this.calculateStats(data);
 
 		const svg = d3.select(this.refs.canvas)
 			.append("svg")
 			.attr("width", width)
 			.attr("height", height)
-			.attr("viewBox", [0, 0, width, height])
-			.style("border", "1px solid black");
+			.attr("viewBox", [0, 0, width + padding, height + padding * 2])
 
-		let chartBody = svg.append("g")
-			.attr("class", "chartBody");
+		svg.append("g")
+			.attr("transform", `translate(${padding / 2}, 0)`)
+			.call(d3.axisLeft()
+				.scale(d3.scaleLinear()
+					.domain([minPrice, maxPrice])
+					.range([height + padding, padding])
+				)
+				.tickFormat((d) => `$${d}`)
+			);
+
+		let candlestickContainer = svg.append("g")
+			.attr("transform", `translate(${padding}, ${padding})`)
+			.attr("class", "candlestick-container")
+
+		let simpleContainer = svg.append("g")
+			.attr("transform", `translate(${padding}, ${padding})`)
+			.attr("class", "simple-container");
+
+		const simpleLine = d3.line()
+			.x((c, i) => i * cWidth)
+			.y((c, i) => (1 - (((c.open + c.close) / 2 - minPrice) / (maxPrice - minPrice))) * height)
+			.curve(d3.curveMonotoneX);
+
+		simpleContainer.append("path")
+			.datum(data)
+			.attr("class", `stock-line ${(data[data.length - 1].close > data[0].open) ? 'increasing' : 'decreasing'}`)
+			.attr("stroke-width", cLineWidth)
+			.attr("stroke", "white")
+			.attr("fill", "none")
+			.attr("d", simpleLine)
 
 		// candlestick shadows
-		chartBody.selectAll(".candle-shadow").data(data).enter()
-			.append("rect")
-			.attr("width", cShadowWidth)
-			.attr("height", (c) => (c.high - c.low) / (maxPrice - minPrice) * height)
-			.attr("fill", (c) => "gray")
-			.attr("x", (c, i) => i * cWidth + (cWidth - cShadowWidth) / 2)
-			.attr("y", (c) => (1 - (c.high - minPrice) / (maxPrice - minPrice)) * height);
+		candlestickContainer.selectAll(".candle-shadow").data(data).enter()
+			.append("line")
+			.attr("class", "candle-shadow")
+			.attr("stroke-width", cShadowWidth)
+			.attr("stroke", "gray")
+			.attr("y1", (c) => (1 - (c.high - minPrice) / (maxPrice - minPrice)) * height)
+			.attr("y2", (c) => (1 - (c.low - minPrice) / (maxPrice - minPrice)) * height)
+			.attr("transform", (c, i) => `translate(${i * cWidth}, 0)`);
 
 		// candlestick real body
-		chartBody.selectAll(".candle-body").data(data).enter()
-			.append("rect")
-			.attr("width", cWidth - cSpaceBetween)
-			.attr("height", (c) => Math.abs(c.close - c.open) / (maxPrice - minPrice) * height)
-			.attr("fill", (c) => (c.close > c.open) ? "green" : "red")
-			.attr("x", (c, i) => i * cWidth + cSpaceBetween / 2)
-			.attr("y", (c) => (1 - (Math.max(c.close, c.open) - minPrice) / (maxPrice - minPrice)) * height);
+		candlestickContainer.selectAll(".candle-body").data(data).enter()
+			.append("line")
+			.attr("class", (c) => `candle-body ${(c.close > c.open) ? "increasing" : "decreasing"}`)
+			.attr("stroke-width", cWidth - cSpaceBetween)
+			.attr("y1", (c) => (1 - (Math.max(c.close, c.open) - minPrice) / (maxPrice - minPrice)) * height)
+			.attr("y2", (c) => (1 - (Math.min(c.close, c.open) - minPrice) / (maxPrice - minPrice)) * height)
+			.attr("transform", (c, i) => `translate(${i * cWidth}, 0)`);
 	}
 
 	render() {
+		let increasing = (this.state.changedPrice >= 0);
+		let sign = increasing ? '+' : '-';
 		return (
-			<div ref="canvas"></div>
+			<div className={"StockGraph " + (increasing ? 'increasing' : 'decreasing')}>
+				<h2>{this.state.stockName}</h2>
+				<h3>${this.state.currentPrice}</h3>
+				<h4>{sign}${Math.abs(this.state.changedPrice)} ({sign}{Math.abs(this.state.changedPercentage)}%) <span>Past {this.state.period}</span></h4>
+				<div ref="canvas"></div>
+			</div>
 		);
 	}
 }

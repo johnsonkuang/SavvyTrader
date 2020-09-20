@@ -7,6 +7,7 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { FiSearch } from 'react-icons/fi';
+import './NavBar.css';
 
 //Stateless Functional Component
 /**
