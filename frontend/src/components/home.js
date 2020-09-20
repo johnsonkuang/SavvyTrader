@@ -57,7 +57,7 @@ class Home extends Component {
   async getUsersPredictions() {
     console.log("INSIDE GET USER PREDICTIONS");
     try {
-      const predictions = await axios.get('http://localhost:8080/getPredictions?user=vishal');
+      const predictions = await axios.get('http://localhost:8080/getAllPredictions');
       const data = predictions.data;
 			console.log("user predictions");
 			console.log(data);
