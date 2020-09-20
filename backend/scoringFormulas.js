@@ -24,7 +24,7 @@ async function getPredictionPayoff(prediction) {
   // check if the predictedDifference and actualDifference
   // have opposite signs
   if ((predictedDifference >= 0) ^ (actualDifference < 0)) {
-    const intervalScaleValue = interval[prediction.intervalType];
+    const intervalScaleValue = intervalScale[prediction.intervalType];
     const result = intervalScaleValue / offScale;
     return Math.ceil(result);
   }

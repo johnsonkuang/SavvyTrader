@@ -107,7 +107,7 @@ class Home extends Component {
 						</Row>
 						<Row>
 							<Col>
-								<h2>All User Predictions for [Stock]</h2>
+								<h2>All user predictions for ${this.props.stockName}</h2>
 								<div>
 									<Table striped bordered hover variant="dark">
 										<thead>

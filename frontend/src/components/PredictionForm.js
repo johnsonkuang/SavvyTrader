@@ -5,7 +5,6 @@ import axios from "axios";
 import dayjs from "dayjs";
 
 const ADD_PREDICTION_URL = "http://localhost:8080/addPrediction";
-const GET_CURRENT_PRICE_URL = "http://localhost:8080/getCurrentPrice";
 
 class PredictionForm extends Component {
 
@@ -38,26 +37,18 @@ class PredictionForm extends Component {
 
 		try {
 			console.log(this.props.stockName);
-			const currentPrice = await axios.get(GET_CURRENT_PRICE_URL, {
-				params: {
-					stock: this.props.stockName
-				}
-			});
 
 			const dateResult = dayjs().add(1, this.state.endTime).unix();
 
 			axios.post(ADD_PREDICTION_URL, {
-				params: {
-					dateResult,
-					currentAmount: currentPrice,
-					intervalType: this.state.endTime,
-					predictedAmount: this.state.predictedStockPrice,
-					stockSymbol: this.props.stockName,
-					trader: 'vishal',
-				}
+				dateResult,
+				intervalType: this.state.endTime,
+				predictedAmount: this.state.predictedStockPrice,
+				stockSymbol: this.props.stockName,
+				trader: 'vishal',
 			});
 
-			alert('Sent!');
+			alert(`Prediction sent!\n${this.props.stockName} @ $${this.state.predictedStockPrice} in the next ${this.state.endTime}.`);
 		} catch (error) {
 			console.error(error);
 		}

@@ -37,15 +37,9 @@ predictedAmount:108
 stockSymbol:"AAPL"
 trader:"vishal"
 */
-app.post('/addPrediction', (req, res) => {
-  if (!req.body.currentAmount) {
-    res.status(400);
-    res.send('Invalid or missing value for currentAmount (price of stock)');
-    return;
-  }
+app.post('/addPrediction', async (req, res) => {
   if (!req.body.dateResult) {
-    res.status(400);
-    res.send('Invalid or missing date for target result date of stock');
+    res.status(400).send('Invalid or missing date for target result date of stock');
     return;
   }
   if (!req.body.intervalType) {
@@ -53,8 +47,7 @@ app.post('/addPrediction', (req, res) => {
     return;
   }
   if (!req.body.predictedAmount) {
-    res.status(400);
-    res.send('Invalid or missing value for predictedAmount (price of stock)');
+    res.status(400).send('Invalid or missing value for predictedAmount (price of stock)');
     return;
   }
   if (!req.body.stockSymbol) {
@@ -65,6 +58,9 @@ app.post('/addPrediction', (req, res) => {
     res.status(400).send('Invalid or missing trader value (username)');
     return;
   }
+  if (!req.body.currentAmount) {
+    req.body.currentAmount = await getCurrentPrice(req.body.stockSymbol);
+  }
   user = req.body.trader;
   queries.getUserInfo(user, db, "traders").then(result => {
     if (result != null && result.energy > 10) {
@@ -74,14 +70,14 @@ app.post('/addPrediction', (req, res) => {
         res.status(500).send('Internal error setting users energy');
         return;
       })
-      const milliseconds = req.body.dateResult;
+      const milliseconds = req.body.dateResult * 1000;
       delete req.body.dateResult;
       req.body.dateMade = admin.firestore.Timestamp.fromDate(new Date());
       req.body.dateResult = admin.firestore.Timestamp.fromDate(new Date(milliseconds));
       queries.addToCollection(req.body, db, "trades").then(result => {
         res.status(200).send('Added document with ID: '+ result.id);
 
-        predictionManager.loadPrediction(result);
+        predictionManager.loadPrediction(req.body);
       })
       .catch((err) => {
         console.log(err);
@@ -286,24 +282,6 @@ app.get('/getCandlesticks', async (req, res) => {
   }
 
 	res.send(candlesticks);
-});
-
-app.get('/getCurrentPrice', async (req, res) => {
-  const stock = req.query.stock;
-
-  if (!stock) {
-    res.status(400).send('Missing stock parameter');
-    return;
-  }
-
-  let price;
-  try {
-    price = await getCurrentPrice(stock);
-  } catch (error) {
-    res.status(400).send('Invalid stock name');
-  }
-
-  res.send(price);
 });
 
 const server = app.listen(PORT, () => {
