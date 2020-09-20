@@ -74,7 +74,10 @@ app.post('/addPrediction', (req, res) => {
         res.status(500).send('Internal error setting users energy');
         return;
       })
+      const milliseconds = req.body.dateResult;
+      delete req.body.dateResult;
       req.body.dateMade = admin.firestore.Timestamp.fromDate(new Date());
+      req.body.dateResult = admin.firestore.Timestamp.fromDate(new Date(milliseconds));
       queries.addToCollection(req.body, db, "trades").then(result => {
         res.status(200).send('Added document with ID: '+ result.id);
 
