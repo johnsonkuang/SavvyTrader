@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import Container from 'react-bootstrap/esm/Container';
 import StockGraph from './StockGraph';
+import PredictionForm from './PredictionForm';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
 import axios from "axios";
 import dayjs from "dayjs";
@@ -103,26 +102,7 @@ class Home extends Component {
 						</Row>
 						<Row>
 							<Col>
-								<div>
-									Compete against other traders in predicting the stock end price at the next hour, day, or week!
-								</div>
-								<Form>
-									<Form.Group controlId="formGuessStockPrice">
-										<Form.Label>Stock Price Prediction</Form.Label>
-										<Form.Control type="Stock Price" placeholder="Enter Stock Price" />
-									</Form.Group>
-									<Form.Group controlId="formEndTime">
-										<Form.Label>End Time</Form.Label>
-										<Form.Control as="select">
-											<option>Next Hour</option>
-											<option>Next Day</option>
-											<option>Next Week</option>
-										</Form.Control>
-									</Form.Group>
-									<Button variant="primary" type="submit">
-										Submit
-									</Button>
-								</Form>
+								<PredictionForm stockName={this.props.stockName}></PredictionForm>
 							</Col>
 						</Row>
 						<Row>

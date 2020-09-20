@@ -14,7 +14,7 @@ export default class LeaderboardRow extends Component {
 				<td className="text-center" style={{color: this.props.rank === 1 ? "gold" : (this.props.rank === 2 ? "silver" : (this.props.rank === 3 ? "#cd7f32 " : "white")) }}>
 					{this.props.rank}
 				</td>
-				<td class="text-center">{this.props.name}</td>
+				<td className="text-center">{this.props.name}</td>
 				<td className="text-center">{this.props.points}</td>
 
 			</tr>

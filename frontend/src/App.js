@@ -35,8 +35,7 @@ class App extends Component {
 
 	handleChange = (event) => {
 		this.setState({
-			value:
-			event.target.value.toUpperCase()
+			value: event.target.value.toUpperCase()
 		});
 	}
 }
