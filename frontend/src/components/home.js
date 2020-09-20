@@ -14,8 +14,8 @@ class Home extends Component {
 		super(props);
 		console.log("INSIDE HOME");
 		this.state = {
-			points: 0,
-			energy: 100,
+			points: "",
+			energy: "",
       predictionArray: []
 		}
 	}
@@ -74,7 +74,6 @@ class Home extends Component {
       <td>{dayjs.unix(prediction.dateMade._seconds).format("YYYY-MM-DD HH:mm:ss")}</td>
       <td>{dayjs.unix(prediction.dateResult._seconds).format("YYYY-MM-DD HH:mm:ss")}</td>
       <td>{prediction.intervalType}</td>
-      <td>{prediction.stockSymbol}</td>
     </tr>
   )
   }
@@ -133,7 +132,7 @@ class Home extends Component {
 						</Row>
 						<Row>
 							<Col>
-								<h2>All User Predictions</h2>
+								<h2>All User Predictions for [Stock]</h2>
 								<div>
 									<Table striped bordered hover variant="dark">
 										<thead>
@@ -143,7 +142,6 @@ class Home extends Component {
                         <th>Date Made</th>
 												<th>Result Date</th>
                         <th>Interval Type</th>
-                        <th>Stock Symbol</th>
 											</tr>
 										</thead>
 										<tbody>
