@@ -20,20 +20,24 @@ class App extends Component {
 					handleSearch={this.handleSearch}
 					handleChange={this.handleChange}
 				/>
-				<Main stockName={this.state.stockName} ></Main>
+				<Main stockName={this.state.stockName} period={this.state.period}></Main>
 			</div>);
 	}
 
 	handleSearch = (event) => {
 		this.setState((prevState) => ({
 			stockName: prevState.value
-		}));
-		console.log(this.state.stockName);
+		}), () => {
+			console.log('Search', this.state.stockName);
+		});
+		event.preventDefault();
 	}
 
 	handleChange = (event) => {
-		this.setState({ value: event.target.value });
-		console.log(this.state.value);
+		this.setState({
+			value:
+			event.target.value.toUpperCase()
+		});
 	}
 }
 

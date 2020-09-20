@@ -50,10 +50,10 @@ class NavBar extends Component {
 								onChange={this.props.handleChange}
 								className="search"
 								type="text"
-								placeholder="Search"
+								placeholder="Search stock symbol"
 								style={{ height: "30px", width: "250px", backgroundColor: "rgba(0,0,0,0)", borderLeft: "none", fontSize: "10px", color: "white" }}
 							/>
-
+							<Button variant="primary" type="submit">Submit</Button>
 						</InputGroup>
 					</Form>
 				</Container>

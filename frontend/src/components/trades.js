@@ -5,7 +5,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table'
 import axios from 'axios';
-import dayjs from 'dayjs';
 
 const USE_MOCK_DATA = false;
 
