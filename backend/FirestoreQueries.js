@@ -36,6 +36,10 @@ exports.getUsersPredictions = async function (user, db, col) {
 }
 exports.getLeaderBoard = async function (db, col) {
   const queryRef = db.collection(col);
-  const resultRef = await queryRef.orderBy("points").limit(10).get();
-  return resultRef.docs.map(doc => doc.id + ": " + doc.data().points);
+  const resultRef = await queryRef.orderBy("points", 'desc').limit(10).get();
+  const arrayRes = resultRef.docs.map(doc => ({
+    name: doc.id,
+    points: doc.data().points
+  }));
+  return arrayRes;
 }
