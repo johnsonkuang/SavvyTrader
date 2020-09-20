@@ -8,6 +8,7 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { FiSearch } from 'react-icons/fi';
 import './NavBar.css';
+import Button from "react-bootstrap/esm/Button";
 
 //Stateless Functional Component
 /**
@@ -38,7 +39,7 @@ class NavBar extends Component {
                             </Col>
                         </Nav>
                     </Row>
-                    <Form>
+                    <Form onSubmit={this.props.handleSearch}>
                         <InputGroup>
                             <InputGroup.Prepend style={{ height: "30px" }}>
                                 <InputGroup.Text style={{ backgroundColor: "rgba(0,0,0,0)", borderRight: "none", paddingRight: "0px" }}>
@@ -46,12 +47,14 @@ class NavBar extends Component {
                                 </InputGroup.Text>
                             </InputGroup.Prepend>
                             <Form.Control
+                                onChange={this.props.handleChange}
                                 className="search"
                                 type="text"
                                 placeholder="Search"
-                                style={{ height: "30px", width: "250px", backgroundColor: "rgba(0,0,0,0)", borderLeft: "none", fontSize: "10px" }}
+                                style={{ height: "30px", width: "250px", backgroundColor: "rgba(0,0,0,0)", borderLeft: "none", fontSize: "10px", color: "white"}}
                             />
-                        </InputGroup>
+                                                    
+                        </InputGroup>                        
                     </Form>
                 </Container>
             </Navbar>

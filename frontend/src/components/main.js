@@ -7,9 +7,15 @@ import Trades from "./trades";
 
 const Main = () => (
   <Switch>
-    <Route exact path = "/" component={Home}/>
-    <Route path = "/leaderboard" component={Leaderboard}/>
-    <Route path = "/trades" component={Trades}/>
+    <Route exact path = "/" render={(props)=>(
+      <Home {...props} />
+    )}/>
+    <Route path = "/leaderboard" render={(props)=>(
+      <Leaderboard {...props} />
+    )}/>
+    <Route path = "/trades" render={(props)=>(
+      <Trades {...props} />
+    )}/>
   </Switch>
 )
 
