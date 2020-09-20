@@ -15,51 +15,51 @@ import Button from "react-bootstrap/esm/Button";
  * Purely cosmetic navbar that uses <Link> to route between app components
  */
 class NavBar extends Component {
-    render() {
-        return (
-            <Navbar bg="dark" variant="dark">
-                <Container>
-                    <Row>
-                        <Col md="auto"><Navbar.Brand>SavvyTrader</Navbar.Brand></Col>
-                        <Nav className="mr-auto">
-                            <Col md="auto">
-                                <Nav.Link href="/">
-                                    Home
-                                </Nav.Link>
-                            </Col>
-                            <Col md="auto">
-                                <Nav.Link href="/trades">
-                                    My Trades
-                                </Nav.Link>
-                            </Col>
-                            <Col md="auto">
-                                <Nav.Link href="/leaderboard">
-                                    Leaderboard
-                                </Nav.Link>
-                            </Col>
-                        </Nav>
-                    </Row>
-                    <Form onSubmit={this.props.handleSearch}>
-                        <InputGroup>
-                            <InputGroup.Prepend style={{ height: "30px" }}>
-                                <InputGroup.Text style={{ backgroundColor: "rgba(0,0,0,0)", borderRight: "none", paddingRight: "0px" }}>
-                                    <FiSearch />
-                                </InputGroup.Text>
-                            </InputGroup.Prepend>
-                            <Form.Control
-                                onChange={this.props.handleChange}
-                                className="search"
-                                type="text"
-                                placeholder="Search"
-                                style={{ height: "30px", width: "250px", backgroundColor: "rgba(0,0,0,0)", borderLeft: "none", fontSize: "10px", color: "white"}}
-                            />
-                                                    
-                        </InputGroup>                        
-                    </Form>
-                </Container>
-            </Navbar>
-        );
-    }
+	render() {
+		return (
+			<Navbar bg="dark" variant="dark">
+				<Container>
+					<Row>
+						<Col md="auto"><Navbar.Brand>SavvyTrader</Navbar.Brand></Col>
+						<Nav className="mr-auto">
+							<Col md="auto">
+								<Nav.Link href="/">
+									Home
+								</Nav.Link>
+							</Col>
+							<Col md="auto">
+								<Nav.Link href="/trades">
+									My Trades
+								</Nav.Link>
+							</Col>
+							<Col md="auto">
+								<Nav.Link href="/leaderboard">
+									Leaderboard
+								</Nav.Link>
+							</Col>
+						</Nav>
+					</Row>
+					<Form onSubmit={this.props.handleSearch}>
+						<InputGroup>
+							<InputGroup.Prepend style={{ height: "30px" }}>
+								<InputGroup.Text style={{ backgroundColor: "rgba(0,0,0,0)", borderRight: "none", paddingRight: "0px" }}>
+									<FiSearch />
+								</InputGroup.Text>
+							</InputGroup.Prepend>
+							<Form.Control
+								onChange={this.props.handleChange}
+								className="search"
+								type="text"
+								placeholder="Search"
+								style={{ height: "30px", width: "250px", backgroundColor: "rgba(0,0,0,0)", borderLeft: "none", fontSize: "10px", color: "white" }}
+							/>
+
+						</InputGroup>
+					</Form>
+				</Container>
+			</Navbar>
+		);
+	}
 }
 
 export default NavBar;

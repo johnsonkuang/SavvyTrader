@@ -6,17 +6,17 @@ import Trades from "./trades";
 
 
 const Main = () => (
-  <Switch>
-    <Route exact path = "/" render={(props)=>(
-      <Home {...props} />
-    )}/>
-    <Route path = "/leaderboard" render={(props)=>(
-      <Leaderboard {...props} />
-    )}/>
-    <Route path = "/trades" render={(props)=>(
-      <Trades {...props} />
-    )}/>
-  </Switch>
+	<Switch>
+		<Route exact path = "/" render={(props)=>(
+			<Home {...props} />
+		)}/>
+		<Route path = "/leaderboard" render={(props)=>(
+			<Leaderboard {...props} />
+		)}/>
+		<Route path = "/trades" render={(props)=>(
+			<Trades {...props} />
+		)}/>
+	</Switch>
 )
 
 export default Main
