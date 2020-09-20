@@ -6,8 +6,41 @@ import Col from "react-bootstrap/Col";
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
+import axios from "axios";
 
 class Home extends Component {
+  constructor(props){
+    super(props);
+    console.log("INSIDE HOME");
+    this.state = {
+      points: 0,
+      energy: 100
+    }
+  }
+  componentDidMount(){
+    console.log("INSIDE COMPONENT DID MOUNT HOME");
+    this.getUserInfo().then((data) =>
+      {
+        this.setState({
+          points : data["points"],
+          energy : data["energy"]
+        })}
+    );
+  }
+  async getUserInfo(){
+    console.log("INSIDE GET USER INFO");
+    try {
+      const response = await axios.get('http://localhost:8080/getUserInfo?user=vishal');
+      const data = response.data;
+      console.log("user data");
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
   render(){
     return(
       // <Container>
@@ -27,11 +60,11 @@ class Home extends Component {
           </Col>
           <Col md={4} className="right-column">
             <Row>
-              <Col md={8}>
-                <h2 className="user-points">Points:0</h2>
+              <Col md={4}>
+                <p className="user-points"> Points: {this.state.points}</p>
               </Col>
               <Col md={8}>
-                <h2 class="user-energy">Energy:0</h2>
+                <p class="user-energy"> Energy: {this.state.energy}</p>
               </Col>
             </Row>
             <Row>
