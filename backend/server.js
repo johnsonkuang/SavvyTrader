@@ -281,6 +281,17 @@ app.get('/getUserInfo', (req, res) => {
     res.status(500).send('Internal error getting user: ' + req.query.user);
   });
 });
+
+app.get('/getAllPredictions', (req, res) => {
+  queries.getAllPredictions(db, "trades")
+	.then(result => {
+    res.send(result);
+  })
+  .catch((err) => {
+		console.log(err);
+    res.status(500).send('Internal error getting predictions');
+  });
+})
 app.get('/', (req, res) => {
 	res.send('Hello World')
 });
