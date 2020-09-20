@@ -15,11 +15,14 @@ class Home extends Component {
       //   <StockGraph></StockGraph>
       // </Container>
       <Container>
+        <h1>{this.props.stockName}</h1>
         <Row>
-          <Col md={8}>
-            <h1>Search Bar for Stonks Here?</h1>
+          <Col md={8}>            
             <div>
-              <StockGraph></StockGraph>
+              <StockGraph 
+                stockName={this.props.stockName}
+                period={"month"}
+              />
             </div>
           </Col>
           <Col md={4} className="right-column">

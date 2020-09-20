@@ -2,9 +2,9 @@ const dayjs = require('dayjs');
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const queries = require('./FirestoreQueries')
+const queries = require('./FirestoreQueries');
 const { getStockData, getCurrentPrice, getPriceTarget } = require('./stockData');
-
+const PredictionManager = require('./predictionManager');
 
 const PORT = process.env.PORT || 8080;
 const admin = require('firebase-admin');
@@ -21,6 +21,9 @@ app.use(express.json());
 app.use(cors({
   origin: 'http://localhost:3000'
 }));
+
+const predictionManager = new PredictionManager(db);
+predictionManager.start();
 
 // add a new 'trade' prediction to the trades collection
 /*
@@ -74,6 +77,8 @@ app.post('/addPrediction', (req, res) => {
       req.body.dateMade = admin.firestore.Timestamp.fromDate(new Date());
       queries.addToCollection(req.body, db, "trades").then(result => {
         res.status(200).send('Added document with ID: '+ result.id);
+
+        predictionManager.loadPrediction(result.data());
       })
       .catch((err) => {
         console.log(err);
@@ -174,53 +179,7 @@ app.post('/addEnergyToUser', (req, res) => {
     console.log(err);
     res.status(500).send('Internal error getting user: ' + req.query.user);
   });
-})
-
-//add points for a traders
-/*
-use request body
-{
-user: "armand",
-points: 10
-}
-*/
-app.post('/addPointsToUser', (req, res) => {
-  if (!req.body.user) {
-    res.status(400).send('Invalid or missing user');
-    return;
-  }
-  if (!req.body.points) {
-    res.status(400).send('Invalid or missing points value');
-    return;
-  }
-	user = req.body.user;
-	deltaPoints = req.body.points;
-  queries.getUserInfo(user, db, "traders")
-  .then(result => {
-    if (result == null) {
-      res.status(400).send('Invalid or missing user');
-      return;
-    }
-    else {
-      queries.getUserInfo(user, db, "traders")
-    	  .then(userInfo =>
-    			queries.setUserPoints(user, userInfo.points + deltaPoints, db, "traders"))
-    		.then(result => {
-    			res.status(200).send("added points "+ deltaPoints);
-          return;
-    		})
-    		.catch((err) => {
-          console.log(err);
-    			res.status(500).send("Internal error adding points");
-          return;
-    		});
-    }
-  })
-  .catch((err) => {
-    console.log(err);
-    res.status(500).send('Internal error getting user: ' + req.query.user);
-  });
-})
+});
 
 // get all of a users predictions/trades
 /*
