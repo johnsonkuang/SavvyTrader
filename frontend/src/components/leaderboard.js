@@ -2,6 +2,8 @@ import React, {Component } from 'react';
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
+import StockGraph from "./StockGraph";
+import Table from 'react-bootstrap/Table'
 
 
 class Leaderboard extends Component {
@@ -9,12 +11,35 @@ class Leaderboard extends Component {
     return(
       <Container>
         <Row>
-          <Col md={14}>
+          <Col md={12}>
             <h1>Leaderboard</h1>
             <div>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              <Table striped bordered hover variant="dark">
+                <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Username</th>
+                  <th>Points</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Vishal</td>
+                  <td>99999</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Johnson</td>
+                  <td>153</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Fred</td>
+                  <td>1</td>
+                </tr>
+                </tbody>
+              </Table>
             </div>
           </Col>
         </Row>
@@ -22,5 +47,4 @@ class Leaderboard extends Component {
     )
   }
 }
-
 export default Leaderboard;
