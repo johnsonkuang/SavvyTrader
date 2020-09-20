@@ -21,6 +21,9 @@ class Home extends Component {
 	componentDidMount() {
 		console.log("INSIDE COMPONENT DID MOUNT HOME");
 		this.getUserInfo().then((data) => {
+      if (!data) {
+        return;
+      }
 			this.setState({
 				points: data["points"],
 				energy: data["energy"]
@@ -28,7 +31,7 @@ class Home extends Component {
 		}
 		);
 	}
-	
+
 	async getUserInfo() {
 		console.log("INSIDE GET USER INFO");
 		try {
