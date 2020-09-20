@@ -31,7 +31,7 @@ exports.getUserInfo = async function (user, db, col) {
 }
 exports.getUsersPredictions = async function (user, db, col) {
   const queryRef = db.collection(col);
-  const resultRef = await queryRef.where('trader', '==', user).get();
+  const resultRef = await queryRef.where('trader', '==', user).orderBy('dateResult', 'desc').get();
   return resultRef.docs.map(doc => doc.data());
 }
 exports.getLeaderBoard = async function (db, col) {
