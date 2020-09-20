@@ -7,6 +7,7 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
 import axios from "axios";
+import dayjs from "dayjs";
 
 class Home extends Component {
 	constructor(props) {
@@ -14,7 +15,8 @@ class Home extends Component {
 		console.log("INSIDE HOME");
 		this.state = {
 			points: 0,
-			energy: 100
+			energy: 100,
+      predictionArray: []
 		}
 	}
 
@@ -28,8 +30,15 @@ class Home extends Component {
 				points: data["points"],
 				energy: data["energy"]
 			})
-		}
-		);
+		});
+    this.getUsersPredictions().then((data) => {
+      if (!data) {
+        return;
+      }
+      this.setState({
+        predictionArray: data
+      })
+    });
 	}
 
 	async getUserInfo() {
@@ -45,7 +54,33 @@ class Home extends Component {
 			return null;
 		}
 	}
+  async getUsersPredictions() {
+    console.log("INSIDE GET USER PREDICTIONS");
+    try {
+      const predictions = await axios.get('http://localhost:8080/getPredictions?user=vishal');
+      const data = predictions.data;
+			console.log("user predictions");
+			console.log(data);
+			return data;
+    } catch (error) {
+      return null;
+    }
+  }
+  renderPrediction(prediction, index) {
+  return (
+    <tr key={index}>
+      <td>{prediction.currentAmount}</td>
+      <td>{prediction.predictedAmount}</td>
+      <td>{dayjs.unix(prediction.dateMade._seconds).format("YYYY-MM-DD HH:mm:ss")}</td>
+      <td>{dayjs.unix(prediction.dateResult._seconds).format("YYYY-MM-DD HH:mm:ss")}</td>
+      <td>{prediction.intervalType}</td>
+      <td>{prediction.stockSymbol}</td>
+    </tr>
+  )
+  }
+  convertDate(predictionDate) {
 
+  }
 	render() {
 		return (
 			// <Container>
@@ -103,23 +138,16 @@ class Home extends Component {
 									<Table striped bordered hover variant="dark">
 										<thead>
 											<tr>
-												<th>End Time</th>
-												<th>Average Predicted Stock Price</th>
+												<th>Starting Price</th>
+                        <th>Predicted Price</th>
+                        <th>Date Made</th>
+												<th>Result Date</th>
+                        <th>Interval Type</th>
+                        <th>Stock Symbol</th>
 											</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<td>Next Hour</td>
-												<td>$56.24</td>
-											</tr>
-											<tr>
-												<td>Next Day</td>
-												<td>57.98</td>
-											</tr>
-											<tr>
-												<td>Next Week</td>
-												<td>$61.54</td>
-											</tr>
+											{this.state.predictionArray.map(this.renderPrediction)}
 										</tbody>
 									</Table>
 								</div>
