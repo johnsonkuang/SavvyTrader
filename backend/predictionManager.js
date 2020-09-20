@@ -1,6 +1,6 @@
 const dayjs = require('dayjs');
 const { getUserInfo, setUserPoints, getAllPredictions } = require('./FirestoreQueries');
-const { getCurrentPrice } = require('./stockData');
+const { getPredictionValue } = require('./scoringFormulas');
 
 module.exports = class {
 	constructor(db) {
@@ -34,7 +34,7 @@ module.exports = class {
 	async _onPredictionExpire(prediction) {
 		const user = prediction.trader;
 
-		const payoff = await this._getPredictionValue(prediction);
+		const payoff = await getPredictionValue(prediction);
 
 		console.log(`Trade by user ${user} for ${prediction.stockSymbol} @ $${prediction.predictedAmount} has expired with payoff ${payoff}`);
 
@@ -43,10 +43,5 @@ module.exports = class {
 			await setUserPoints(user, userInfo.points + payoff, this.db, "traders");
 			console.log(`Points of ${user} have increased from ${userInfo.points} to ${userInfo.points + payoff}`);
 		}
-	}
-
-	async _getPredictionValue(trade) {
-		const currentPrice = await getCurrentPrice(trade.stockSymbol);
-		return (currentPrice === trade.predictedAmount) ? 100 : 0;
 	}
 }

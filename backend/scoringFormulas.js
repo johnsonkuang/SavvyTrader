@@ -7,6 +7,7 @@ const intervalScale =
   "month" : 10000,
   "year" : 100000
 };
+
 async function getPredictionEnergyCost(prediction, stockSymbol) {
   let analyst = (await getPriceTarget(stockSymbol)).median;
   let current = await getCurrentPrice(stockSymbol);
@@ -15,7 +16,7 @@ async function getPredictionEnergyCost(prediction, stockSymbol) {
 }
 
 // TODO: Armand
-async function predictionValue(prediction) {
+async function getPredictionPayoff(prediction) {
   const currentPrice = await getCurrentPrice(prediction.stockSymbol);
   const predictedDifference = prediction.predictedAmount - prediction.currentAmount;
   const actualDifference = currentPrice - prediction.currentAmount;
@@ -29,3 +30,6 @@ async function predictionValue(prediction) {
   }
   return 0;
 }
+
+module.exports.getPredictionEnergyCost = getPredictionEnergyCost;
+module.exports.getPredictionPayoff = getPredictionPayoff;
