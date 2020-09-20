@@ -74,7 +74,6 @@ class StockGraph extends Component {
 			changedPercentage: round(data[data.length - 1].close / data[0].open - 1),
 		});
 
-		console.log(data);
 		return data;
 
 	}
@@ -143,8 +142,9 @@ class StockGraph extends Component {
 			.datum(data)
 			.attr("class", `stock-line ${(data[data.length - 1].close > data[0].open) ? 'increasing' : 'decreasing'}`)
 			.attr("stroke-width", cLineWidth)
-			.attr("stroke", "white")
+			.attr("stroke", "lightgray")
 			.attr("fill", "none")
+			.style("opacity", 0.8)
 			.attr("d", simpleLine)
 
 		// candlestick shadows

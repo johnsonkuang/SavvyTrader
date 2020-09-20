@@ -15,29 +15,44 @@ class Home extends Component {
 		this.state = {
 			points: "",
 			energy: "",
-      predictionArray: []
-		}
+			predictionArray: [],
+			tableHTML: "",
+		};
 	}
 
 	componentDidMount() {
 		console.log("INSIDE COMPONENT DID MOUNT HOME");
 		this.getUserInfo().then((data) => {
-      if (!data) {
-        return;
-      }
+			if (!data) {
+				return;
+			}
 			this.setState({
 				points: data["points"],
 				energy: data["energy"]
 			})
 		});
-    this.getUsersPredictions().then((data) => {
-      if (!data) {
-        return;
-      }
-      this.setState({
-        predictionArray: data
-      })
-    });
+
+		this.setTableHTML();
+	}
+
+	componentDidUpdate(prevProps) {
+		if (this.props.stockName === prevProps.stockName) {
+			return;
+		}
+
+		this.setTableHTML();
+	}
+
+	async setTableHTML() {
+		let data = await this.getUsersPredictions();
+		if (!data) {
+			return;
+		}
+
+		this.setState({
+			predictionArray: data,
+			tableHTML: data.map(this.renderPrediction)
+		});
 	}
 
 	async getUserInfo() {
@@ -53,32 +68,30 @@ class Home extends Component {
 			return null;
 		}
 	}
-  async getUsersPredictions() {
-    console.log("INSIDE GET USER PREDICTIONS");
-    try {
-      const predictions = await axios.get('http://localhost:8080/getAllPredictions');
-      const data = predictions.data;
-			console.log("user predictions");
-			console.log(data);
-			return data;
-    } catch (error) {
-      return null;
-    }
-  }
-  renderPrediction(prediction, index) {
-  return (
-    <tr key={index}>
-      <td>{prediction.currentAmount}</td>
-      <td>{prediction.predictedAmount}</td>
-      <td>{dayjs.unix(prediction.dateMade._seconds).format("YYYY-MM-DD HH:mm:ss")}</td>
-      <td>{dayjs.unix(prediction.dateResult._seconds).format("YYYY-MM-DD HH:mm:ss")}</td>
-      <td>{prediction.intervalType}</td>
-    </tr>
-  )
-  }
-  convertDate(predictionDate) {
+	async getUsersPredictions() {
+		console.log("INSIDE GET USER PREDICTIONS");
+		try {
+			const predictions = await axios.get('http://localhost:8080/getAllPredictions');
+			const data = predictions.data;
 
-  }
+			return data.filter((p) => p.stockSymbol === this.props.stockName);
+		} catch (error) {
+			return null;
+		}
+	}
+
+	renderPrediction(prediction, index) {
+		return (
+			<tr key={index}>
+				<td>{prediction.currentAmount}</td>
+				<td>{prediction.predictedAmount}</td>
+				<td>{dayjs.unix(prediction.dateMade._seconds).format("YYYY-MM-DD HH:mm:ss")}</td>
+				<td>{dayjs.unix(prediction.dateResult._seconds).format("YYYY-MM-DD HH:mm:ss")}</td>
+				<td>{prediction.intervalType}</td>
+			</tr>
+		)
+	}
+
 	render() {
 		return (
 			<Container>
@@ -113,15 +126,13 @@ class Home extends Component {
 										<thead>
 											<tr>
 												<th>Starting Price</th>
-                        <th>Predicted Price</th>
-                        <th>Date Made</th>
+												<th>Predicted Price</th>
+												<th>Date Made</th>
 												<th>Result Date</th>
-                        <th>Interval Type</th>
+												<th>Interval Type</th>
 											</tr>
 										</thead>
-										<tbody>
-											{this.state.predictionArray.map(this.renderPrediction)}
-										</tbody>
+										<tbody>{this.state.tableHTML}</tbody>
 									</Table>
 								</div>
 							</Col>
