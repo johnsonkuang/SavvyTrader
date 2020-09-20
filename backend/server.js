@@ -78,7 +78,7 @@ app.post('/addPrediction', (req, res) => {
       queries.addToCollection(req.body, db, "trades").then(result => {
         res.status(200).send('Added document with ID: '+ result.id);
 
-        predictionManager.loadPrediction(result.data());
+        predictionManager.loadPrediction(result);
       })
       .catch((err) => {
         console.log(err);
