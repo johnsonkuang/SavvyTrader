@@ -4,3 +4,15 @@
 .candle-body.increasing {
 	stroke: var(--green);
 }
+
+.StockGraph.increasing h2, .StockGraph.increasing h3, .StockGraph.increasing h4 {
+	color: var(--green);
+}
+
+.StockGraph.decreasing h2, .StockGraph.decreasing h3, .StockGraph.decreasing h4 {
+	color: var(--red);
+}
+
+.StockGraph .time-period {
+	color: #bbb;
+}

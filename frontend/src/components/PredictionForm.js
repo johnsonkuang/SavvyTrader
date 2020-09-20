@@ -82,16 +82,16 @@ class PredictionForm extends Component {
 	render() {
 		return (
 			<div>
-				<div>
+				<div className="prediction-intro">
 					Compete against other traders in predicting the stock price of ${this.props.stockName} at the next hour, day, or week!
 				</div>
 				<Form onSubmit={this.handleFormSubmit}>
 					<Form.Group controlId="formGuessStockPrice">
-						<Form.Label>Stock Price Prediction</Form.Label>
+						<Form.Label><strong>Stock Price Prediction</strong></Form.Label>
 						<Form.Control type="Stock Price" placeholder="Enter Stock Price" onChange={this.onPriceChange} />
 					</Form.Group>
 					<Form.Group controlId="formEndTime">
-						<Form.Label>End Time</Form.Label>
+						<Form.Label><strong>End Time</strong></Form.Label>
 						<Form.Control as="select" onChange={this.onTimeChange}>
 							<option>Next Hour</option>
 							<option>Next Day</option>

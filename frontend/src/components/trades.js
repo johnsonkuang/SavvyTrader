@@ -5,12 +5,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table'
 import axios from 'axios';
-
-const USE_MOCK_DATA = false;
+import dayjs from 'dayjs';
 
 const SERVER_API_URL = 'http://localhost:8080/getPredictions';
-
-const mockData = [{ "currentAmount": 100, "dateMade": "2020-08-19 17:00:0", "intervalType": "hour", "predictedAmount": 200, "stockSymbol": "ARMA", "trader": "vishal" }];
 
 class Trades extends Component {
 
@@ -22,9 +19,9 @@ class Trades extends Component {
 				symbol={trade["stockSymbol"]}
 				currPrice={trade["currentAmount"]}
 				predPrice={trade["predictedAmount"]}
-				timePred={trade["dateMade"].toString()}
+				timePred={dayjs(trade["dateMade"]).format("MMM D @ H:mm A")}
 				type={trade["intervalType"]}
-				endTime={trade["endDate"].toString()}
+				endTime={dayjs(trade["endDate"]).format("MMM D @ H:mm A")}
 			/>
 		);
 
@@ -48,15 +45,10 @@ class Trades extends Component {
 			this.setState({
 				trades: data
 			})
-		}
-		);
+		});
 	}
 
 	async getPredictions(user) {
-		if (USE_MOCK_DATA) {
-			return mockData;
-		}
-
 		try {
 			const response = await axios.get(SERVER_API_URL, {
 				params: {
@@ -96,9 +88,9 @@ class Trades extends Component {
 							<Table striped bordered hover variant="dark">
 								<thead>
 									<tr>
-										<th>Company</th>
-										<th>Current Price</th>
-										<th>Predicted Price</th>
+										<th>Stock</th>
+										<th>Current Price ($)</th>
+										<th>Predicted Price ($)</th>
 										<th>Time Predicted</th>
 										<th>Prediction Type</th>
 										<th>Prediction End Time</th>

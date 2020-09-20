@@ -11,14 +11,14 @@ export default class TradeRow extends Component {
 
 	componentDidMount() {
 		this.setState({
-			proximity: Math.abs(this.props.predPrice - this.props.currPrice) / this.props.currPrice <= 0.05
+			proximity: this.props.predPrice > this.props.currPrice
 		})
 	}
 
 	render() {
 		return (
 			<tr>
-				<td className="text-center">{this.props.symbol}</td>
+				<td className="text-center"><strong>{this.props.symbol}</strong></td>
 				<td className="text-center">{this.props.currPrice}</td>
 				<td className="text-center" style={{ color: this.state.proximity ? "#28a745" : "#dc3545" }}>
 					{this.props.predPrice} {this.state.proximity ? <BsArrowUpShort /> : <BsArrowDownShort />}

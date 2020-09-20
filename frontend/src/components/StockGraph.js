@@ -96,8 +96,8 @@ class StockGraph extends Component {
 	}
 
 	drawBarChart(data) {
-		const width = 700;
-		const height = 500;
+		const width = 850;
+		const height = 600;
 		const padding = 50;
 
 		const cLineWidth = 4;
@@ -186,7 +186,7 @@ class StockGraph extends Component {
 			<div className={"StockGraph " + (increasing ? 'increasing' : 'decreasing')}>
 				<h2>{this.props.stockName}</h2>
 				<h3>${this.state.currentPrice}</h3>
-				<h4>{sign}${round(this.state.changedPrice)} ({sign}{round(this.state.changedPercentage * 100)}%) <span>Past {this.props.period}</span></h4>
+				<h4>{sign}${round(this.state.changedPrice)} ({sign}{round(this.state.changedPercentage * 100)}%) <span className="time-period">Past {this.props.period}</span></h4>
 				<div ref="canvas"></div>
 			</div>
 		);

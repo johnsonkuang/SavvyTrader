@@ -85,8 +85,8 @@ class Home extends Component {
 			<tr key={index}>
 				<td>{prediction.currentAmount}</td>
 				<td>{prediction.predictedAmount}</td>
-				<td>{dayjs.unix(prediction.dateMade._seconds).format("YYYY-MM-DD HH:mm:ss")}</td>
-				<td>{dayjs.unix(prediction.dateResult._seconds).format("YYYY-MM-DD HH:mm:ss")}</td>
+				<td>{dayjs.unix(prediction.dateMade._seconds).format("MMM D H:mm A")}</td>
+				<td>{dayjs.unix(prediction.dateResult._seconds).format("MMM D H:mm A")}</td>
 				<td>{prediction.intervalType}</td>
 			</tr>
 		)
@@ -106,11 +106,11 @@ class Home extends Component {
 					</Col>
 					<Col md={4} className="right-column">
 						<Row>
-							<Col md={4}>
-								<p className="user-points"> Points: {this.state.points}</p>
+							<Col md={5}>
+								<h2 className="user-points">Points:<br />{this.state.points}</h2>
 							</Col>
-							<Col md={8}>
-								<p className="user-energy"> Energy: {this.state.energy}</p>
+							<Col md={4}>
+								<h2 className="user-energy">Energy:<br />{this.state.energy}</h2>
 							</Col>
 						</Row>
 						<Row>
@@ -125,8 +125,8 @@ class Home extends Component {
 									<Table striped bordered hover variant="dark">
 										<thead>
 											<tr>
-												<th>Starting Price</th>
-												<th>Predicted Price</th>
+												<th>Initial ($)</th>
+												<th>Predicted ($)</th>
 												<th>Date Made</th>
 												<th>Result Date</th>
 												<th>Interval Type</th>

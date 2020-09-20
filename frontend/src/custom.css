@@ -9,6 +9,8 @@
 
 body {
 	background: var(--bg-color);
+	font-size: 1.2rem;
+	line-height: 2rem;
 	color: #ddd;
 }
 
@@ -18,4 +20,12 @@ body {
 
 .user-points, .user-energy {
 	display: block;
+}
+
+.container {
+	max-width: 80%;
+}
+
+.prediction-intro {
+	padding-bottom: 16px;
 }
