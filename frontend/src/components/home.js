@@ -82,18 +82,13 @@ class Home extends Component {
   }
 	render() {
 		return (
-			// <Container>
-			//   <div>Home</div>
-			//   <StockGraph></StockGraph>
-			// </Container>
 			<Container>
-				<h1>{this.props.stockName}</h1>
 				<Row>
 					<Col md={8}>
 						<div>
 							<StockGraph
 								stockName={this.props.stockName}
-								period={"month"}
+								period={this.props.period}
 							/>
 						</div>
 					</Col>
@@ -103,7 +98,7 @@ class Home extends Component {
 								<p className="user-points"> Points: {this.state.points}</p>
 							</Col>
 							<Col md={8}>
-								<p class="user-energy"> Energy: {this.state.energy}</p>
+								<p className="user-energy"> Energy: {this.state.energy}</p>
 							</Col>
 						</Row>
 						<Row>

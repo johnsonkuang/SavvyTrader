@@ -5,18 +5,24 @@ import Leaderboard from "./leaderboard";
 import Trades from "./trades";
 
 
-const Main = () => (
-	<Switch>
-		<Route exact path = "/" render={(props)=>(
-			<Home {...props} />
-		)}/>
-		<Route path = "/leaderboard" render={(props)=>(
-			<Leaderboard {...props} />
-		)}/>
-		<Route path = "/trades" render={(props)=>(
-			<Trades {...props} />
-		)}/>
-	</Switch>
-)
+export default class Main extends React.Component {
+	constructor(props) {
+		super(props);
+	}
 
-export default Main
+	render() {
+		return (
+			<Switch>
+				<Route exact path = "/" render={(props)=>(
+					<Home {...this.props} />
+				)}/>
+				<Route path = "/leaderboard" render={(props)=>(
+					<Leaderboard {...props} />
+				)}/>
+				<Route path = "/trades" render={(props)=>(
+					<Trades {...props} />
+				)}/>
+			</Switch>
+		);
+	}
+}
