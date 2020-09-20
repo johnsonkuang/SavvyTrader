@@ -5,6 +5,7 @@ const app = express();
 const queries = require('./FirestoreQueries')
 const getStockData = require('./stockData');
 
+
 const PORT = process.env.PORT || 8080;
 const admin = require('firebase-admin');
 // initialize firebase
@@ -32,31 +33,53 @@ stockSymbol:"AAPL"
 trader:"vishal"
 */
 app.post('/addPrediction', (req, res) => {
+  if (!req.body.currentAmount) {
+    res.status(400);
+    res.send('Invalid or missing value for currentAmount (price of stock)');
+    return;
+  }
+  if (!req.body.dateResult) {
+    res.status(400);
+    res.send('Invalid or missing date for target result date of stock');
+    return;
+  }
+  if (!req.body.intervalType) {
+    res.status(400).send('Invalid or missing value for intervalType');
+    return;
+  }
+  if (!req.body.predictedAmount) {
+    res.status(400);
+    res.send('Invalid or missing value for predictedAmount (price of stock)');
+    return;
+  }
+  if (!req.body.stockSymbol) {
+    res.status(400).send('Invalid or missing stockSymbol');
+    return;
+  }
+  if (!req.body.trader) {
+    res.status(400).send('Invalid or missing trader value (username)');
+    return;
+  }
   user = req.body.trader;
   queries.getUserInfo(user, db, "traders").then(result => {
     if (result != null && result.energy > 10) {
-      queries.setUserEnergy(user, result.energy - 10, db, "traders").then(uer => {
-        console.log("reduced energy for user: ", req.body.trader);
-      })
+      queries.setUserEnergy(user, result.energy - 10, db, "traders")
       .catch((error) => {
         console.log(error);
-        res.sendStatus(500);
+        res.status(500).send('Internal error setting users energy');
         return;
       })
       req.body.dateMade = admin.firestore.Timestamp.fromDate(new Date());
       queries.addToCollection(req.body, db, "trades").then(result => {
-        console.log('Added document with ID: ', result.id);
-        res.sendStatus(200);
+        res.status(200).send('Added document with ID: '+ result.id);
       })
       .catch((err) => {
         console.log(err);
-        console.log('Error adding document/prediction');
-        res.sendStatus(500);
+        res.status(500).send('Internal error adding document/prediction');
       })
     }
     else {
-      console.log('Not enough energy');
-      res.sendStatus(200);
+      res.status(400).send("Not enough energy for user or user does not exist");
     }
   });
 });
@@ -68,18 +91,41 @@ user:"Armand",
 energy:9001
 */
 app.post('/addUser', (req, res) => {
+  if (!req.body.user) {
+    res.status(400).send('Invalid or missing user value');
+    return;
+  }
+  if (!req.body.energy) {
+    res.status(400).send('Invalid or missing energy value');
+    return;
+  }
   req.body.points = 0;
   const username = req.body.user;
+  exists = false;
   delete req.body.user;
-  queries.addToCollectionWithID(req.body, db, "traders", username)
+  queries.getUserInfo(username, db, "traders")
 	.then(result => {
-    console.log("Added user with name ", username);
-    res.sendStatus(200);
+    if (result != null) {
+      res.status(400).send('User exists');
+      return;
+    }
+    else {
+      queries.addToCollectionWithID(req.body, db, "traders", username)
+    	.then(result => {
+        res.status(200).send("Added user with name " + username);
+        return;
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).send('Error adding document/user');
+        return;
+      });
+    }
   })
   .catch((err) => {
     console.log(err);
-    console.log('Error adding document/user');
-    res.sendStatus(500);
+    res.status(500).send('Internal error getting user: ' + req.query.user);
+    return;
   });
 });
 
@@ -90,20 +136,40 @@ user:"vishal",
 energy"50"
 */
 app.post('/addEnergyToUser', (req, res) => {
+  if (!req.body.user) {
+    res.status(400).send('Invalid or missing user');
+    return;
+  }
+  if (!req.body.energy) {
+    res.status(400).send('Invalid or missing energy value');
+    return;
+  }
 	user = req.body.user;
 	deltaEnergy = req.body.energy;
-	queries.getUserInfo(user, db, "traders")
-	  .then(userInfo =>
-			queries.setUserEnergy(user, userInfo.energy + deltaEnergy, db, "traders"))
-		.then(result => {
-			console.log("added energy ", deltaEnergy);
-			res.sendStatus(200);
-		})
-		.catch((err) => {
-			console.log(err);
-			console.log("error adding energy");
-			res.sendStatus(500);
-		})
+  queries.getUserInfo(user, db, "traders")
+  .then(result => {
+    if (result == null) {
+      res.status(400).send('Invalid or missing user');
+      return;
+    }
+    else {
+      queries.getUserInfo(user, db, "traders")
+    	  .then(userInfo =>
+    			queries.setUserEnergy(user, userInfo.energy + deltaEnergy, db, "traders"))
+    		.then(result => {
+    			res.status(200).send("added energy "+ deltaEnergy);
+          return;
+    		})
+    		.catch((err) => {
+          console.log(err);
+          return;
+    		});
+    }
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(500).send('Internal error getting user: ' + req.query.user);
+  });
 })
 
 //add points for a traders
@@ -112,20 +178,41 @@ user: "armand",
 points: 10
 */
 app.post('/addPointsToUser', (req, res) => {
+  if (!req.body.user) {
+    res.status(400).send('Invalid or missing user');
+    return;
+  }
+  if (!req.body.points) {
+    res.status(400).send('Invalid or missing points value');
+    return;
+  }
 	user = req.body.user;
 	deltaPoints = req.body.points;
-	queries.getUserInfo(user, db, "traders")
-	  .then(userInfo =>
-			queries.setUserPoints(user, userInfo.points + deltaPoints, db, "traders"))
-		.then(result => {
-			console.log("added points ", deltaPoints);
-			res.sendStatus(200);
-		})
-		.catch((err) => {
-			console.log(err);
-			console.log("error adding points");
-			res.sendStatus(500);
-		})
+  queries.getUserInfo(user, db, "traders")
+  .then(result => {
+    if (result == null) {
+      res.status(400).send('Invalid or missing user');
+      return;
+    }
+    else {
+      queries.getUserInfo(user, db, "traders")
+    	  .then(userInfo =>
+    			queries.setUserPoints(user, userInfo.points + deltaPoints, db, "traders"))
+    		.then(result => {
+    			res.status(200).send("added points "+ deltaPoints);
+          return;
+    		})
+    		.catch((err) => {
+          console.log(err);
+    			res.status(500).send("Internal error adding points");
+          return;
+    		});
+    }
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(500).send('Internal error getting user: ' + req.query.user);
+  });
 })
 
 // get all of a users predictions/trades
@@ -133,19 +220,18 @@ app.post('/addPointsToUser', (req, res) => {
 please only send the user name and nothing else for nawuuwuwuwuwuuw
 */
 app.get('/getPredictions', (req, res) => {
-  queries.getUsersPredictions(req.body.user, db, "trades")
+  if (!req.query.user) {
+    res.status(400).send('Invalid or missing user');
+    return;
+  }
+  queries.getUsersPredictions(req.query.user, db, "trades")
 	.then(result => {
-    if (result.empty) {
-      console.log('No matching predictions');
-      return result;
-    }
-    console.log("Got all trades from user ", req.body.user);
     res.send(result);
   })
   .catch((err) => {
     console.log(err);
-    console.log('Error getting predictions from user: ', req.body.user);
-    res.sendStatus(500);
+    res.status(500);
+    res.send('Internal error getting predictions from user: ' + req.query.user);
   });
 });
 
@@ -153,35 +239,31 @@ app.get('/getPredictions', (req, res) => {
 app.get('/getLeaderboard', (req, res) => {
   queries.getLeaderBoard(db, "traders")
 	.then(result => {
-    if (result.empty) {
-      console.log('No matching users');
-      return result;
-    }
-    console.log("Got all top users");
     res.send(result);
   })
   .catch((err) => {
 		console.log(err);
-    console.log('Error getting predictions from user: ', req.body.user);
-    res.sendStatus(500);
+    res.status(500).send('Internal error getting leaderboard');
   });
 });
 
 // get a specific users infofrom username
 app.get('/getUserInfo', (req, res) => {
-  queries.getUserInfo(req.body.user, db, "traders")
+  if (!req.query.user) {
+    res.status(400).send('Invalid or missing user');
+    return;
+  }
+  queries.getUserInfo(req.query.user, db, "traders")
 	.then(result => {
     if (result == null) {
-      console.log('No matching users');
-      return result;
+      res.status(400).send('Invalid or missing user');
+      return;
     }
-    console.log("Got user info");
     res.send(result);
   })
   .catch((err) => {
     console.log(err);
-    console.log('Error getting user: ', req.body.user);
-    res.sendStatus(500);
+    res.status(500).send('Internal error getting user: ' + req.query.user);
   });
 });
 app.get('/', (req, res) => {
