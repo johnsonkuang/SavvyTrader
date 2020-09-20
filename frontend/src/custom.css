@@ -1,0 +1,21 @@
+:root {
+	--bg-color: rgb(4,13,20);
+}
+
+*, ::before, ::after {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background: var(--bg-color);
+	color: #ddd;
+}
+
+.right-column .row {
+	margin-bottom: 64px;
+}
+
+.user-points, .user-energy {
+	display: block;
+}

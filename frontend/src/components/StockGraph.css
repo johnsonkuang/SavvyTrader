@@ -1,0 +1,6 @@
+.candle-body.decreasing {
+	stroke: var(--red);
+}
+.candle-body.increasing {
+	stroke: var(--green);
+}

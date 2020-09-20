@@ -1,6 +1,5 @@
 import React from 'react';
 
-import './App.css';
 import Main from './components/main';
 import NavBar from './NavBar';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

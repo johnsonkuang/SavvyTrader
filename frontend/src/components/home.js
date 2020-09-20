@@ -22,13 +22,13 @@ class Home extends Component {
               <StockGraph></StockGraph>
             </div>
           </Col>
-          <Col md={4}>
+          <Col md={4} className="right-column">
             <Row>
-              <Col md={4}>
-                <h2>Points:0</h2>
+              <Col md={8}>
+                <h2 className="user-points">Points:0</h2>
               </Col>
-              <Col md={4}>
-                <h2>Energy:0</h2>
+              <Col md={8}>
+                <h2 class="user-energy">Energy:0</h2>
               </Col>
             </Row>
             <Row>
@@ -59,7 +59,7 @@ class Home extends Component {
               <Col>
                 <h2>All User Predictions</h2>
                 <div>
-                  <Table striped bordered hover>
+                  <Table striped bordered hover variant="dark">
                     <thead>
                     <tr>
                       <th>End Time</th>
