@@ -53,7 +53,7 @@ class NavBar extends Component {
 								placeholder="Search stock symbol"
 								style={{ height: "30px", width: "250px", backgroundColor: "rgba(0,0,0,0)", borderLeft: "none", fontSize: "10px", color: "white" }}
 							/>
-							<Button variant="primary" type="submit">Submit</Button>
+							<Button variant="light" size="sm" type="submit">Submit</Button>
 						</InputGroup>
 					</Form>
 				</Container>
