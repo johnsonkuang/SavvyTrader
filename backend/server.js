@@ -24,7 +24,9 @@ app.use(cors({
 
 // add a new 'trade' prediction to the trades collection
 /*
+use request body
 Add all fields for a trade/prediction except dateMade
+ex.
 currentAmount:106.84
 dateResult:September 18, 2020 at 6:22:00 PM UTC-7
 intervalType:"hour"
@@ -87,6 +89,7 @@ app.post('/addPrediction', (req, res) => {
 // add a new 'trader' / user to the traders collection
 /*
 set key for name of user and initial energy and nothing else for nauw UwU
+use request body
 user:"Armand",
 energy:9001
 */
@@ -131,6 +134,7 @@ app.post('/addUser', (req, res) => {
 
 // add energy for a specific trader
 /*
+use request body
 set values for keys user and energy to add like...
 user:"vishal",
 energy"50"
@@ -174,8 +178,11 @@ app.post('/addEnergyToUser', (req, res) => {
 
 //add points for a traders
 /*
+use request body
+{
 user: "armand",
 points: 10
+}
 */
 app.post('/addPointsToUser', (req, res) => {
   if (!req.body.user) {
@@ -218,7 +225,12 @@ app.post('/addPointsToUser', (req, res) => {
 // get all of a users predictions/trades
 /*
 please only send the user name and nothing else for nawuuwuwuwuwuuw
+requires
+{
+user: value
+}
 */
+// user request query
 app.get('/getPredictions', (req, res) => {
   if (!req.query.user) {
     res.status(400).send('Invalid or missing user');
@@ -236,6 +248,7 @@ app.get('/getPredictions', (req, res) => {
 });
 
 // get the top 10 users from the firestore based on points
+// does not need any params
 app.get('/getLeaderboard', (req, res) => {
   queries.getLeaderBoard(db, "traders")
 	.then(result => {
@@ -247,7 +260,9 @@ app.get('/getLeaderboard', (req, res) => {
   });
 });
 
-// get a specific users infofrom username
+// get a specific users info from username
+// use request query
+// requires {user: value}
 app.get('/getUserInfo', (req, res) => {
   if (!req.query.user) {
     res.status(400).send('Invalid or missing user');
