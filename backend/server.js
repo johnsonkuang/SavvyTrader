@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const queries = require('./FirestoreQueries')
-const getStockData = require('./stockData');
+const { getStockData, getCurrentPrice, getPriceTarget } = require('./stockData');
 
 
 const PORT = process.env.PORT || 8080;
@@ -313,6 +313,24 @@ app.get('/getCandlesticks', async (req, res) => {
   }
 
 	res.send(candlesticks);
+});
+
+app.get('/getCurrentPrice', async (req, res) => {
+  const stock = req.query.stock;
+
+  if (!stock) {
+    res.status(400).send('Missing stock parameter');
+    return;
+  }
+
+  let price;
+  try {
+    price = await getCurrentPrice(stock);
+  } catch (error) {
+    res.status(400).send('Invalid stock name');
+  }
+
+  res.send(price);
 });
 
 const server = app.listen(PORT, () => {
