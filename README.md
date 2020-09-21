@@ -1,6 +1,6 @@
 # Savvy Trader
 
-Gamify stock. Make free predictions on stock and see how well you would do in the real stock market by virtually betting on stocks by spending energy and gaining leader board points.
+Gamify stock. Make free predictions on stock and see how well you would do in the real stock market by virtually betting on stocks by spending energy and gaining leader board points. Submitted to [Aye Aye Hackers 2020](https://ayeayehackers.devpost.com/) and received an award for **best financial hack**.
 
 ## Getting Started
 
